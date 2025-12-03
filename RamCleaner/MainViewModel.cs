@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using System.Windows;
+using System.Windows.Media;
 
 namespace RamCleaner
 {
@@ -99,22 +100,80 @@ namespace RamCleaner
 
         public ObservableCollection<LogEntry> Logs { get; } = new ObservableCollection<LogEntry>();
 
+        // --- New Features ---
+        
+        // 1. RAM History Graph Data
+        // Points X: 0..60 (Time), Y: 0..100 (Usage %)
+        private PointCollection _historyPoints = new PointCollection();
+        public PointCollection HistoryPoints { get => _historyPoints; set { _historyPoints = value; OnPropertyChanged(); } }
+
+        // 2. Whitelist
+        public ObservableCollection<string> Whitelist { get; } = new ObservableCollection<string>();
+        
+        private string _newWhitelistItem = "";
+        public string NewWhitelistItem 
+        { 
+            get => _newWhitelistItem; 
+            set { _newWhitelistItem = value; OnPropertyChanged(); } 
+        }
+
+        // 3. Notification Settings
+        private bool _showAutoCleanNotification = false;
+        public bool ShowAutoCleanNotification
+        {
+            get => _showAutoCleanNotification;
+            set { _showAutoCleanNotification = value; OnPropertyChanged(); }
+        }
+
+        private bool _showManualCleanNotification = true;
+        public bool ShowManualCleanNotification
+        {
+            get => _showManualCleanNotification;
+            set { _showManualCleanNotification = value; OnPropertyChanged(); }
+        }
+
         // Commands
         public RelayCommand CleanCommand { get; }
         public RelayCommand ClearLogCommand { get; }
+        public RelayCommand AddWhitelistCommand { get; }
+        public RelayCommand RemoveWhitelistCommand { get; }
 
         public event Action<string, string>? RequestNotification;
+
+        private readonly System.Collections.Generic.List<int> _rawHistory = new System.Collections.Generic.List<int>();
 
         public MainViewModel()
         {
             _memoryService = new MemoryService();
             CleanCommand = new RelayCommand(o => PerformClean(true));
             ClearLogCommand = new RelayCommand(o => Logs.Clear());
+
+            AddWhitelistCommand = new RelayCommand(o => 
+            {
+                if (!string.IsNullOrWhiteSpace(NewWhitelistItem))
+                {
+                    _memoryService.AddToWhitelist(NewWhitelistItem);
+                    RefreshWhitelist();
+                    NewWhitelistItem = "";
+                }
+            });
+
+            RemoveWhitelistCommand = new RelayCommand(o => 
+            {
+                if (o is string item)
+                {
+                    _memoryService.RemoveFromWhitelist(item);
+                    RefreshWhitelist();
+                }
+            });
             
+            RefreshWhitelist();
+            
+            // Fill history with zeros
+            for (int i = 0; i < 60; i++) _rawHistory.Add(0);
+
             // Check initial startup state
             _isStartupEnabled = StartupService.IsStartupEnabled();
-            // Notify property changed manually for this without triggering the setter logic
-            // (Actually, for simple MVVM, just setting the field is fine, UI will bind to it).
 
             _monitorTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1.0) };
             _monitorTimer.Tick += MonitorTimer_Tick;
@@ -128,6 +187,28 @@ namespace RamCleaner
         {
             UpdateStats();
             CheckAutoClean();
+
+            // Update History
+            _rawHistory.Add(RamLoadPercent);
+            if (_rawHistory.Count > 60) _rawHistory.RemoveAt(0);
+
+            // Generate Points for Graph (60 points, scaled to 0-100 Y)
+            // Y is inverted (0 is top) so 100% load = 0 Y, 0% load = 100 Y
+            var points = new PointCollection();
+            for (int i = 0; i < _rawHistory.Count; i++)
+            {
+                points.Add(new System.Windows.Point(i, 100 - _rawHistory[i]));
+            }
+            HistoryPoints = points;
+        }
+
+        private void RefreshWhitelist()
+        {
+            Whitelist.Clear();
+            foreach (var item in _memoryService.GetWhitelist())
+            {
+                Whitelist.Add(item);
+            }
         }
 
         private void UpdateStats()
@@ -184,7 +265,9 @@ namespace RamCleaner
             LastCleanStatus = msg;
             AddLog(msg);
 
-            if (freedMb > 0 || isManual)
+            bool shouldNotify = isManual ? ShowManualCleanNotification : ShowAutoCleanNotification;
+
+            if ((freedMb > 0 || isManual) && shouldNotify)
             {
                 RequestNotification?.Invoke("Memory Cleaned", $"Successfully freed {freedMb:F0} MB of RAM.");
             }

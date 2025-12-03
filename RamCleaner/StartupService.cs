@@ -40,8 +40,8 @@ namespace RamCleaner
                 // Create a scheduled task that runs with highest privileges (Admin) at logon
                 // We need to wrap the path in quotes because it might contain spaces.
                 // The arguments for /TR need outer quotes if the inner command has quotes.
-                // schtasks /TR "'C:\Path With Spaces\App.exe'"
-                string command = $"/Create /TN \"{TaskName}\" /TR \"'{exePath}'\" /SC ONLOGON /RL HIGHEST /F";
+                // schtasks /TR "'C:\Path With Spaces\App.exe' -minimized"
+                string command = $"/Create /TN \"{TaskName}\" /TR \"'{exePath}' -minimized\" /SC ONLOGON /RL HIGHEST /F";
                 RunSchTasks(command);
             }
             else

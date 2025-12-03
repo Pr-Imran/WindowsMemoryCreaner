@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -30,11 +31,61 @@ namespace RamCleaner
             "msmpeng", "nissrv" // Defender
         };
 
+        private readonly HashSet<string> _userWhitelist = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly string _whitelistPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "whitelist.txt");
+
         public bool IsAdmin { get; private set; }
 
         public MemoryService()
         {
             IsAdmin = IsRunningAsAdmin();
+            LoadWhitelist();
+        }
+
+        private void LoadWhitelist()
+        {
+            try
+            {
+                if (File.Exists(_whitelistPath))
+                {
+                    var lines = File.ReadAllLines(_whitelistPath);
+                    foreach (var line in lines)
+                    {
+                        if (!string.IsNullOrWhiteSpace(line))
+                        {
+                            _userWhitelist.Add(line.Trim());
+                        }
+                    }
+                }
+            }
+            catch { /* Ignore */ }
+        }
+
+        public void AddToWhitelist(string processName)
+        {
+            if (string.IsNullOrWhiteSpace(processName)) return;
+            _userWhitelist.Add(processName.Trim());
+            SaveWhitelist();
+        }
+
+        public void RemoveFromWhitelist(string processName)
+        {
+            _userWhitelist.Remove(processName);
+            SaveWhitelist();
+        }
+
+        public IEnumerable<string> GetWhitelist()
+        {
+            return _userWhitelist.ToList();
+        }
+
+        private void SaveWhitelist()
+        {
+            try
+            {
+                File.WriteAllLines(_whitelistPath, _userWhitelist);
+            }
+            catch { /* Ignore */ }
         }
 
         private bool IsRunningAsAdmin()
@@ -126,6 +177,7 @@ namespace RamCleaner
                     if (p.Id == 0 || p.Id == 4) continue; 
                     if (p.HasExited) continue;
                     if (CriticalProcesses.Contains(p.ProcessName)) continue;
+                    if (_userWhitelist.Contains(p.ProcessName)) continue;
 
                     bool success = NativeMethods.EmptyWorkingSet(p.Handle) != 0;
                     if (success) processCount++;
