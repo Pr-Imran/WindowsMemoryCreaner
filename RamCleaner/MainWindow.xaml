@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RamCleaner"
         mc:Ignorable="d"
-        Title="Safe RAM Cleaner" Height="630" Width="450"
-        ResizeMode="CanMinimize"
+        Title="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=AppTitle}" Height="650" Width="480"
+        ResizeMode="CanResize"
+        Icon="pack://application:,,,/OptiRam.ico"
         WindowStartupLocation="CenterScreen"
         Background="#FAFAFA">
     
@@ -21,34 +22,36 @@
         </Style>
     </Window.Resources>
 
-    <Grid Margin="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Stats -->
-            <RowDefinition Height="Auto"/> <!-- Manual -->
-            <RowDefinition Height="Auto"/> <!-- Tabs (Auto, Whitelist, Options) -->
-            <RowDefinition Height="*"/>    <!-- Log -->
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,2,0">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Stats -->
+                <RowDefinition Height="Auto"/> <!-- Manual -->
+                <RowDefinition Height="Auto"/> <!-- Tabs (Auto, Whitelist, Options) -->
+                <RowDefinition Height="Auto"/> <!-- Log -->
+            </Grid.RowDefinitions>
 
-        <!-- 1. Detailed Statistics & Graph -->
-        <Border Grid.Row="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+            <!-- 1. Detailed Statistics & Graph -->
+            <Border Grid.Row="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,15">
             <StackPanel>
-                <TextBlock Text="System Memory Status" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" Foreground="#333"/>
+                <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=SystemMemoryStatus}" FontWeight="Bold" FontSize="16" Margin="0,0,0,10" Foreground="#333"/>
                 
                 <!-- Stats Grid -->
                 <Grid Margin="0,0,0,10">
                     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                        <TextBlock Text="Used RAM" Foreground="#666" FontSize="11"/>
+                        <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=UsedRAM}" Foreground="#666" FontSize="11"/>
                         <TextBlock Text="{Binding UsedRamDisplay}" FontWeight="Bold" Foreground="#C0392B" FontSize="14"/>
-                        <TextBlock Text="Available RAM" Foreground="#666" FontSize="11" Margin="0,5,0,0"/>
+                        <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=AvailableRAM}" Foreground="#666" FontSize="11" Margin="0,5,0,0"/>
                         <TextBlock Text="{Binding FreeRamDisplay}" FontWeight="Bold" Foreground="#27AE60" FontSize="14"/>
                     </StackPanel>
                     <StackPanel Grid.Column="1">
-                         <TextBlock Text="Total RAM" Foreground="#666" FontSize="11"/>
+                         <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=TotalPhysicalRAM}" Foreground="#666" FontSize="11"/>
                          <TextBlock Text="{Binding TotalRam}" FontWeight="SemiBold"/>
-                         <TextBlock Text="Cached" Foreground="#666" FontSize="11" Margin="0,5,0,0"/>
+                         <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=CachedStandby}" Foreground="#666" FontSize="11" Margin="0,5,0,0"/>
                          <TextBlock Text="{Binding CachedRamDisplay}" FontSize="12"/>
-                         <TextBlock Text="{Binding CommittedRamDisplay}" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
+                         <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=CommittedLimit}" FontSize="11" Foreground="#888" Margin="0,2,0,0"/>
+                         <TextBlock Text="{Binding CommittedRamDisplay}" FontSize="12"/>
                     </StackPanel>
                 </Grid>
 
@@ -61,7 +64,7 @@
                         <Polyline Points="{Binding HistoryPoints}" Stroke="#3498DB" StrokeThickness="1.5" Stretch="Fill"/>
                     </Grid>
                 </Border>
-                <TextBlock Text="Usage History (60s)" FontSize="10" Foreground="#999" HorizontalAlignment="Right"/>
+                <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=UsageHistory}" FontSize="10" Foreground="#999" HorizontalAlignment="Right"/>
 
                 <ProgressBar Height="4" Minimum="0" Maximum="100" Value="{Binding RamLoadPercent}" Background="#EEE" BorderThickness="0" Foreground="#3498DB" Margin="0,5,0,0"/>
             </StackPanel>
@@ -69,7 +72,7 @@
 
         <!-- 2. Manual Clean -->
         <StackPanel Grid.Row="1" Margin="0,0,0,15">
-            <Button Command="{Binding CleanCommand}" Content="Clean Memory Now" 
+            <Button Command="{Binding CleanCommand}" Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=CleanMemoryNow}" 
                     FontSize="14" FontWeight="Bold" Padding="0,10" 
                     Background="#3498DB" Foreground="Black" BorderThickness="0">
                 <Button.Resources>
@@ -97,17 +100,17 @@
             </TabControl.Resources>
 
             <!-- Auto Clean Tab -->
-            <TabItem Header="Auto Clean">
+            <TabItem Header="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=AutoClean}">
                 <StackPanel Margin="10">
                     <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                        <TextBlock Text="Strategies" FontWeight="Bold"/>
-                        <CheckBox Grid.Column="1" IsChecked="{Binding IsStartupEnabled}" Content="Run on Startup" Margin="0"/>
+                        <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Strategies}" FontWeight="Bold"/>
+                        <CheckBox Grid.Column="1" IsChecked="{Binding IsStartupEnabled}" Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=RunOnStartup}" Margin="0"/>
                     </Grid>
                     
                     <Grid Margin="0,0,0,10">
                         <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="40"/></Grid.ColumnDefinitions>
-                        <CheckBox IsChecked="{Binding IsThresholdCleanEnabled}" Content="Usage >" />
+                        <CheckBox IsChecked="{Binding IsThresholdCleanEnabled}" Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=UsageGreater}" />
                         <Slider Grid.Column="1" Minimum="0" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True"
                                 Value="{Binding AutoCleanThreshold}" IsEnabled="{Binding IsThresholdCleanEnabled}"
                                 VerticalAlignment="Center" Margin="5,0"/>
@@ -116,7 +119,7 @@
 
                     <Grid>
                         <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                        <CheckBox IsChecked="{Binding IsTimeCleanEnabled}" Content="Every" />
+                        <CheckBox IsChecked="{Binding IsTimeCleanEnabled}" Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Every}" />
                         <Slider Grid.Column="1" Minimum="0" Maximum="60" TickFrequency="1" IsSnapToTickEnabled="True"
                                 Value="{Binding AutoCleanIntervalMinutes}" IsEnabled="{Binding IsTimeCleanEnabled}"
                                 VerticalAlignment="Center" Margin="18,0,5,0"/>
@@ -126,35 +129,116 @@
             </TabItem>
 
             <!-- Whitelist Tab -->
-            <TabItem Header="Whitelist">
+            <TabItem Header="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Whitelist}">
                 <Grid Margin="10">
-                    <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                    <ListBox ItemsSource="{Binding Whitelist}" BorderThickness="1" BorderBrush="#EEE" Margin="0,0,0,5">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                    <TextBlock Text="{Binding}"/>
-                                    <Button Content="x" Command="{Binding DataContext.RemoveWhitelistCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
-                                            CommandParameter="{Binding}" Margin="10,0,0,0" Padding="5,0" BorderThickness="0" Background="Transparent" Foreground="Red"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <Grid Grid.Row="1">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                        <TextBox Text="{Binding NewWhitelistItem, UpdateSourceTrigger=PropertyChanged}" Padding="5" VerticalContentAlignment="Center"/>
-                        <Button Grid.Column="1" Content="Add" Command="{Binding AddWhitelistCommand}" Padding="10,2" Margin="5,0,0,0"/>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left: Saved Whitelist -->
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                        <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=IgnoredProcesses}" FontWeight="Bold" Margin="0,0,0,5"/>
+                        
+                        <ListBox Grid.Row="1" ItemsSource="{Binding Whitelist}" BorderThickness="1" BorderBrush="#EEE" Margin="0,0,0,5">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                                        <Button Content="x" Command="{Binding DataContext.RemoveWhitelistCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                CommandParameter="{Binding}" Margin="10,0,0,0" Padding="5,0" BorderThickness="0" Background="Transparent" Foreground="Red" FontWeight="Bold"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding NewWhitelistItem, UpdateSourceTrigger=PropertyChanged}" Padding="5" VerticalContentAlignment="Center" ToolTip="Type name manually"/>
+                            <Button Grid.Column="1" Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Add}" Command="{Binding AddWhitelistCommand}" Padding="10,2" Margin="5,0,0,0"/>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Right: Active Processes -->
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                        <Grid Margin="0,0,0,5">
+                            <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=RunningProcesses}" FontWeight="Bold" VerticalAlignment="Center"/>
+                            <Button Content="↻" Command="{Binding RefreshProcessesCommand}" HorizontalAlignment="Right" Padding="5,0" ToolTip="Refresh List"/>
+                        </Grid>
+
+                        <ListView Grid.Row="1" ItemsSource="{Binding RunningProcesses}" SelectedItem="{Binding SelectedRunningProcess}" BorderThickness="1" BorderBrush="#EEE">
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Name}" Width="140">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" ToolTip="{Binding InstanceCount, StringFormat='Instances: {0}'}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsCritical}" Value="True">
+                                                                    <Setter Property="Foreground" Value="Red"/>
+                                                                    <Setter Property="ToolTip" Value="System Critical (Protected)"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsWhitelisted}" Value="True">
+                                                                    <Setter Property="Foreground" Value="Green"/>
+                                                                    <Setter Property="ToolTip" Value="Already Whitelisted"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Action}" Width="60">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="+" Command="{Binding DataContext.AddSelectedToWhitelistCommand, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                        CommandParameter="{Binding Name}" 
+                                                        Padding="5,0" HorizontalAlignment="Center">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsWhitelisted}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding IsCritical}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
                     </Grid>
                 </Grid>
             </TabItem>
 
             <!-- Options Tab -->
-            <TabItem Header="Options">
+            <TabItem Header="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Options}">
                 <StackPanel Margin="10">
-                    <TextBlock Text="Notifications" FontWeight="Bold" Margin="0,0,0,10"/>
-                    <CheckBox IsChecked="{Binding ShowManualCleanNotification}" Content="Show after Manual Clean" Margin="0,0,0,5"/>
-                    <CheckBox IsChecked="{Binding ShowAutoCleanNotification}" Content="Show after Auto Clean" Margin="0,0,0,5"/>
+                    <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Notifications}" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <CheckBox IsChecked="{Binding ShowManualCleanNotification}" Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=ShowAfterManualClean}" Margin="0,0,0,5"/>
+                    <CheckBox IsChecked="{Binding ShowAutoCleanNotification}" Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=ShowAfterAutoClean}" Margin="0,0,0,15"/>
+                    
+                    <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Language}" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <ComboBox ItemsSource="{Binding AvailableLanguages}" SelectedItem="{Binding SelectedLanguage}" DisplayMemberPath="DisplayName" Width="200" HorizontalAlignment="Left"/>
                 </StackPanel>
             </TabItem>
         </TabControl>
@@ -167,19 +251,20 @@
             </Grid.RowDefinitions>
             
             <Grid Margin="0,0,0,5">
-                <TextBlock Text="Event Log" FontWeight="Bold" FontSize="12" Foreground="#333"/>
-                <Button Command="{Binding ClearLogCommand}" Content="Clear" HorizontalAlignment="Right" Padding="8,2" FontSize="11"/>
+                <TextBlock Text="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=EventLog}" FontWeight="Bold" FontSize="12" Foreground="#333"/>
+                <Button Command="{Binding ClearLogCommand}" Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Clear}" HorizontalAlignment="Right" Padding="8,2" FontSize="11"/>
             </Grid>
             
-            <ListView Grid.Row="1" ItemsSource="{Binding Logs}" BorderThickness="1" BorderBrush="#EEE" FontSize="11">
+            <ListView Grid.Row="1" ItemsSource="{Binding Logs}" BorderThickness="1" BorderBrush="#EEE" FontSize="11" Height="150">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time}" Width="60"/>
-                        <GridViewColumn Header="Message" DisplayMemberBinding="{Binding Message}" Width="310"/>
+                        <GridViewColumn Header="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Time}" DisplayMemberBinding="{Binding Time}" Width="60"/>
+                        <GridViewColumn Header="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Message}" DisplayMemberBinding="{Binding Message}" Width="310"/>
                     </GridView>
                 </ListView.View>
             </ListView>
         </Grid>
 
     </Grid>
+    </ScrollViewer>
 </Window>

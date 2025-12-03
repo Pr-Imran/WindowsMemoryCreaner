@@ -40,12 +40,12 @@ namespace RamCleaner
             });
             _notifyIcon.ContextMenuStrip = contextMenu;
 
-            // Subscribe to notification requests
+            // Subscribe to ViewModel notification requests
             _vm.RequestNotification += (title, message) =>
             {
                 _notifyIcon.ShowBalloonTip(3000, title, message, Forms.ToolTipIcon.Info);
             };
-
+            
             // Handle Start Minimized
             if (App.StartMinimized)
             {

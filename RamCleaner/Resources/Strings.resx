@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>OptiRam</value>
+  </data>
+  <data name="SystemMemoryStatus" xml:space="preserve">
+    <value>System Memory Status</value>
+  </data>
+  <data name="TotalPhysicalRAM" xml:space="preserve">
+    <value>Total Physical RAM</value>
+  </data>
+  <data name="UsedRAM" xml:space="preserve">
+    <value>Used RAM</value>
+  </data>
+  <data name="AvailableRAM" xml:space="preserve">
+    <value>Available RAM</value>
+  </data>
+  <data name="CachedStandby" xml:space="preserve">
+    <value>Cached (Standby)</value>
+  </data>
+  <data name="CommittedLimit" xml:space="preserve">
+    <value>Committed / Limit</value>
+  </data>
+  <data name="UsageHistory" xml:space="preserve">
+    <value>Usage History (60s)</value>
+  </data>
+  <data name="CleanMemoryNow" xml:space="preserve">
+    <value>Clean Memory Now</value>
+  </data>
+  <data name="AutoClean" xml:space="preserve">
+    <value>Auto Clean</value>
+  </data>
+  <data name="Strategies" xml:space="preserve">
+    <value>Strategies</value>
+  </data>
+  <data name="RunOnStartup" xml:space="preserve">
+    <value>Run on Startup</value>
+  </data>
+  <data name="UsageGreater" xml:space="preserve">
+    <value>Usage ></value>
+  </data>
+  <data name="Every" xml:space="preserve">
+    <value>Every</value>
+  </data>
+  <data name="Whitelist" xml:space="preserve">
+    <value>Whitelist</value>
+  </data>
+  <data name="IgnoredProcesses" xml:space="preserve">
+    <value>Ignored Processes</value>
+  </data>
+  <data name="RunningProcesses" xml:space="preserve">
+    <value>Running Processes</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="ShowAfterManualClean" xml:space="preserve">
+    <value>Show after Manual Clean</value>
+  </data>
+  <data name="ShowAfterAutoClean" xml:space="preserve">
+    <value>Show after Auto Clean</value>
+  </data>
+  <data name="EventLog" xml:space="preserve">
+    <value>Event Log</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="ReadyToClean" xml:space="preserve">
+    <value>Ready to clean</value>
+  </data>
+  <data name="Cleaning" xml:space="preserve">
+    <value>Cleaning...</value>
+  </data>
+  <data name="FreedMessage" xml:space="preserve">
+    <value>Freed: {0:F0} MB (Processed {1} apps)</value>
+  </data>
+  <data name="MemoryCleaned" xml:space="preserve">
+    <value>Memory Cleaned</value>
+  </data>
+  <data name="SuccessfullyFreed" xml:space="preserve">
+    <value>Successfully freed {0:F0} MB of RAM.</value>
+  </data>
+  <data name="AppStarted" xml:space="preserve">
+    <value>App started. Ready.</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+</root>

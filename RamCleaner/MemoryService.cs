@@ -20,6 +20,14 @@ namespace RamCleaner
         public double CommitLimitGb;
     }
 
+    public class ProcessInfo
+    {
+        public string Name { get; set; } = "";
+        public int InstanceCount { get; set; }
+        public bool IsCritical { get; set; }
+        public bool IsWhitelisted { get; set; }
+    }
+
     public class MemoryService
     {
         // Safety: List of critical system processes to NEVER touch.
@@ -40,6 +48,40 @@ namespace RamCleaner
         {
             IsAdmin = IsRunningAsAdmin();
             LoadWhitelist();
+        }
+
+        public List<ProcessInfo> GetActiveProcessNames()
+        {
+            var result = new List<ProcessInfo>();
+            try
+            {
+                var processes = Process.GetProcesses();
+                var groups = processes.GroupBy(p => p.ProcessName, StringComparer.OrdinalIgnoreCase);
+
+                foreach (var group in groups)
+                {
+                    string name = group.Key;
+                    // Skip if empty name
+                    if (string.IsNullOrWhiteSpace(name)) continue;
+
+                    bool isCritical = CriticalProcesses.Contains(name);
+                    bool isWhitelisted = _userWhitelist.Contains(name);
+
+                    result.Add(new ProcessInfo
+                    {
+                        Name = name,
+                        InstanceCount = group.Count(),
+                        IsCritical = isCritical,
+                        IsWhitelisted = isWhitelisted
+                    });
+                }
+                
+                // Cleanup
+                foreach(var p in processes) p.Dispose();
+            }
+            catch { /* Access denied or other errors */ }
+
+            return result.OrderBy(p => p.Name).ToList();
         }
 
         private void LoadWhitelist()
