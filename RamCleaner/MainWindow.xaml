@@ -230,6 +230,49 @@
                 </Grid>
             </TabItem>
 
+            <!-- Disk Cleaner Tab -->
+            <TabItem Header="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=DiskCleaner}">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ListBox ItemsSource="{Binding DiskItems}" BorderThickness="1" BorderBrush="#EEE" Margin="0,0,0,10">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="30"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox IsChecked="{Binding IsSelected}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding SizeDisplay}" VerticalAlignment="Center" Foreground="#555" Margin="10,0,10,0"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Scan}" Command="{Binding ScanDiskCommand}" Padding="15,5" Margin="0,0,10,0"/>
+                        <Button Content="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=CleanDisk}" Command="{Binding CleanDiskCommand}" Padding="15,5" Background="#E74C3C" Foreground="White" FontWeight="Bold">
+                             <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="4"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
             <!-- Options Tab -->
             <TabItem Header="{Binding Source={x:Static local:LocalizedStrings.Instance}, Path=Options}">
                 <StackPanel Margin="10">

@@ -51,6 +51,11 @@ namespace RamCleaner
         public string MemoryCleaned => Strings.MemoryCleaned;
         public string SuccessfullyFreed => Strings.SuccessfullyFreed;
 
+        // Disk Cleaner (Hardcoded for now to avoid RESX regeneration issues)
+        public string DiskCleaner => "Disk Cleaner";
+        public string Scan => "Scan";
+        public string CleanDisk => "Clean Junk";
+
         public void SetCulture(CultureInfo culture)
         {
             Strings.Culture = culture;
@@ -79,9 +84,37 @@ namespace RamCleaner
         public string Code { get; set; }
     }
 
+    public class DiskItem : INotifyPropertyChanged
+    {
+        private string _sizeDisplay = "Pending scan...";
+        private bool _isSelected;
+
+        public string Name { get; set; } = "";
+        public DiskCleanerService.CleanerType Type { get; set; }
+        
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set { _isSelected = value; OnPropertyChanged(); }
+        }
+
+        public string SizeDisplay
+        {
+            get => _sizeDisplay;
+            set { _sizeDisplay = value; OnPropertyChanged(); }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
+    }
+
     public class MainViewModel : INotifyPropertyChanged
     {
         private readonly MemoryService _memoryService = null!;
+        private readonly DiskCleanerService _diskCleaner = null!;
         private readonly DispatcherTimer _monitorTimer;
         
         private DateTime _lastThresholdCleanTime = DateTime.MinValue;
@@ -234,6 +267,11 @@ namespace RamCleaner
         public ObservableCollection<string> Whitelist { get; } = new ObservableCollection<string>();
         public ObservableCollection<ProcessInfo> RunningProcesses { get; } = new ObservableCollection<ProcessInfo>();
         
+        // 3. Disk Cleaner
+        public ObservableCollection<DiskItem> DiskItems { get; } = new ObservableCollection<DiskItem>();
+        public RelayCommand ScanDiskCommand { get; } = null!;
+        public RelayCommand CleanDiskCommand { get; } = null!;
+
         private string _newWhitelistItem = "";
         public string NewWhitelistItem 
         { 
@@ -280,6 +318,18 @@ namespace RamCleaner
             try 
             {
                 _memoryService = new MemoryService();
+                _diskCleaner = new DiskCleanerService();
+
+                // Initialize Disk Items
+                DiskItems.Add(new DiskItem { Name = "System Temp Files", Type = DiskCleanerService.CleanerType.SystemTemp, IsSelected = true });
+                DiskItems.Add(new DiskItem { Name = "Chrome Cache", Type = DiskCleanerService.CleanerType.ChromeCache, IsSelected = true });
+                DiskItems.Add(new DiskItem { Name = "Chrome Cookies", Type = DiskCleanerService.CleanerType.ChromeCookies, IsSelected = false });
+                DiskItems.Add(new DiskItem { Name = "Edge Cache", Type = DiskCleanerService.CleanerType.EdgeCache, IsSelected = true });
+                DiskItems.Add(new DiskItem { Name = "Edge Cookies", Type = DiskCleanerService.CleanerType.EdgeCookies, IsSelected = false });
+
+                ScanDiskCommand = new RelayCommand(o => PerformDiskScan());
+                CleanDiskCommand = new RelayCommand(o => PerformDiskClean());
+
                 CleanCommand = new RelayCommand(o => PerformClean(true));
                 ClearLogCommand = new RelayCommand(o => Logs.Clear());
 
@@ -463,6 +513,56 @@ namespace RamCleaner
             }
 
             UpdateStats();
+        }
+
+        private async void PerformDiskScan()
+        {
+            AddLog("Scanning disk junk...");
+            await System.Threading.Tasks.Task.Run(() => 
+            {
+                foreach (var item in DiskItems)
+                {
+                     long size = _diskCleaner.GetSize(item.Type);
+                     string sizeStr = FormatBytes(size);
+                     System.Windows.Application.Current.Dispatcher.Invoke(() => item.SizeDisplay = sizeStr);
+                }
+            });
+            AddLog("Disk scan complete.");
+        }
+
+        private async void PerformDiskClean()
+        {
+             AddLog("Cleaning selected disk junk...");
+             long totalFreed = 0;
+             await System.Threading.Tasks.Task.Run(() => 
+             {
+                 foreach (var item in DiskItems)
+                 {
+                     if (item.IsSelected)
+                     {
+                         var result = _diskCleaner.Clean(item.Type);
+                         totalFreed += result.BytesCleaned;
+                         System.Windows.Application.Current.Dispatcher.Invoke(() => item.SizeDisplay = "Cleaned");
+                     }
+                 }
+                 
+                 // Re-scan
+                 foreach (var item in DiskItems)
+                {
+                     long size = _diskCleaner.GetSize(item.Type);
+                     string sizeStr = FormatBytes(size);
+                     System.Windows.Application.Current.Dispatcher.Invoke(() => item.SizeDisplay = sizeStr);
+                }
+             });
+             AddLog($"Disk cleaning complete. Freed {FormatBytes(totalFreed)}.");
+        }
+
+        private string FormatBytes(long bytes)
+        {
+            if (bytes < 1024) return $"{bytes} B";
+            if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F2} KB";
+            if (bytes < 1024 * 1024 * 1024) return $"{bytes / (1024.0 * 1024.0):F2} MB";
+            return $"{bytes / (1024.0 * 1024.0 * 1024.0):F2} GB";
         }
 
         private void AddLog(string message)
