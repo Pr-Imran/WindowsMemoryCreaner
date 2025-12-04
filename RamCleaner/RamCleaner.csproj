@@ -12,8 +12,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Company>OptiRam</Company>
     <Authors>Imran Ahmed</Authors>
+    <Author>Imran Ahmed</Author>
     <Product>OptiRam Memory Cleaner</Product>
-    <Copyright>Copyright © 2025</Copyright>
+    <Copyright>Imran @ Copyright © 2025</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

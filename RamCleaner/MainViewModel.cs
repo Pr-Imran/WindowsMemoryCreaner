@@ -69,13 +69,19 @@ namespace RamCleaner
 {
     public class LanguageOption
     {
+        public LanguageOption(string displayName, string code)
+        {
+            DisplayName = displayName;
+            Code = code;
+        }
+
         public string DisplayName { get; set; }
         public string Code { get; set; }
     }
 
     public class MainViewModel : INotifyPropertyChanged
     {
-        private readonly MemoryService _memoryService;
+        private readonly MemoryService _memoryService = null!;
         private readonly DispatcherTimer _monitorTimer;
         
         private DateTime _lastThresholdCleanTime = DateTime.MinValue;
@@ -85,12 +91,12 @@ namespace RamCleaner
         // --- Language ---
         public ObservableCollection<LanguageOption> AvailableLanguages { get; } = new ObservableCollection<LanguageOption>
         {
-            new LanguageOption { DisplayName = "English", Code = "en" },
-            new LanguageOption { DisplayName = "Português (Brasil)", Code = "pt-BR" },
-            new LanguageOption { DisplayName = "বাংলা (Bangla)", Code = "bn-BD" }
+            new LanguageOption("English", "en"),
+            new LanguageOption("Português (Brasil)", "pt-BR"),
+            new LanguageOption("বাংলা (Bangla)", "bn-BD")
         };
 
-        private LanguageOption _selectedLanguage;
+        private LanguageOption _selectedLanguage = null!;
         public LanguageOption SelectedLanguage
         {
             get => _selectedLanguage;
@@ -258,12 +264,12 @@ namespace RamCleaner
         }
 
         // Commands
-        public RelayCommand CleanCommand { get; }
-        public RelayCommand ClearLogCommand { get; }
-        public RelayCommand AddWhitelistCommand { get; }
-        public RelayCommand RemoveWhitelistCommand { get; }
-        public RelayCommand RefreshProcessesCommand { get; }
-        public RelayCommand AddSelectedToWhitelistCommand { get; }
+        public RelayCommand CleanCommand { get; } = null!;
+        public RelayCommand ClearLogCommand { get; } = null!;
+        public RelayCommand AddWhitelistCommand { get; } = null!;
+        public RelayCommand RemoveWhitelistCommand { get; } = null!;
+        public RelayCommand RefreshProcessesCommand { get; } = null!;
+        public RelayCommand AddSelectedToWhitelistCommand { get; } = null!;
 
         public event Action<string, string>? RequestNotification;
 
